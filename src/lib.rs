@@ -51,7 +51,11 @@ pub fn uptime() -> Result<UnsignedMicrosecond>
 #[cfg(target_os = "windows")]
 pub fn uptime() -> Result<UnsignedMicrosecond>
 {
-	((self::kernel32::GetTickCount() as UnsignedMillisecond) * 1_000) as UnsignedMicrosecond
+	Ok(((self::kernel32::GetTickCount() as UnsignedMillisecond) * 1_000) as UnsignedMicrosecond)
 }
 
-// ... just leaves Solaris ...
+#[cfg(target_os = "solaris")]
+pub fn uptime() -> Result<UnsignedMicrosecond>
+{
+	panic!("uptime has not been implemented for Solaris. You'll need to explore utmpx.h and make use of the getutxent(3c) family of APIs")
+}
