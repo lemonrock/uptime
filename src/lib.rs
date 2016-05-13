@@ -16,7 +16,7 @@ use std::mem::uninitialized;
 // For interest, this GitHub comment shows how to polyfill gettimeofday on Windows: https://stackoverflow.com/questions/10905892/equivalent-of-gettimeday-for-windows
 
 #[cfg(not(any(target_os = "linux", target_os = "android", target_os = "windows", target_os = "solaris")))]
-pub fn uptime() -> Result<UnsignedMicrosecond>
+pub fn uptime_in_microseconds() -> Result<UnsignedMicrosecond>
 {
 	let boot = try!(self::sysctl::boot_time());
 	
@@ -34,7 +34,7 @@ pub fn uptime() -> Result<UnsignedMicrosecond>
 }
 
 #[cfg(any(target_os = "linux", target_os = "android"))]
-pub fn uptime() -> Result<UnsignedMicrosecond>
+pub fn uptime_in_microseconds() -> Result<UnsignedMicrosecond>
 {
 	unsafe
 	{
@@ -49,13 +49,13 @@ pub fn uptime() -> Result<UnsignedMicrosecond>
 }
 
 #[cfg(target_os = "windows")]
-pub fn uptime() -> Result<UnsignedMicrosecond>
+pub fn uptime_in_microseconds() -> Result<UnsignedMicrosecond>
 {
 	Ok(((self::kernel32::GetTickCount() as UnsignedMillisecond) * 1_000) as UnsignedMicrosecond)
 }
 
 #[cfg(target_os = "solaris")]
-pub fn uptime() -> Result<UnsignedMicrosecond>
+pub fn uptime_in_microseconds() -> Result<UnsignedMicrosecond>
 {
 	panic!("uptime has not been implemented for Solaris. You'll need to explore utmpx.h and make use of the getutxent(3c) family of APIs")
 }
